@@ -32,7 +32,25 @@
 
 ## 🚀 使い方
 
-### 起動方法
+### 📱 スマホからアクセス（推奨）
+
+GitHub Pagesでデプロイされているため、以下のURLからスマホで直接アクセスできます：
+
+**https://dyki-ogawa.github.io/dailyCost/**
+
+スマホのブラウザで上記URLを開いて、ホーム画面に追加すればアプリのように使えます！
+
+#### iPhoneでホーム画面に追加する方法
+1. Safariでアプリを開く
+2. 共有ボタン（□に↑）をタップ
+3. 「ホーム画面に追加」を選択
+
+#### Androidでホーム画面に追加する方法
+1. Chromeでアプリを開く
+2. メニュー（⋮）をタップ
+3. 「ホーム画面に追加」を選択
+
+### 💻 ローカルで起動（開発用）
 
 1. `index.html` をブラウザで開く
 
@@ -75,10 +93,14 @@ npx serve
 
 ```
 dailyCost/
-├── index.html      # メインHTMLファイル
-├── styles.css      # スタイルシート
-├── app.js          # JavaScriptロジック
-└── README.md       # このファイル
+├── .github/
+│   └── workflows/
+│       └── deploy.yml       # GitHub Pages自動デプロイ設定
+├── index.html               # メインHTMLファイル
+├── styles.css               # スタイルシート
+├── app.js                   # JavaScriptロジック
+├── manifest.json            # PWAマニフェスト
+└── README.md                # このファイル
 ```
 
 ## 🔧 カスタマイズ
@@ -113,6 +135,25 @@ body {
 - Edge
 
 モバイルブラウザにも対応しています。
+
+## 🚀 デプロイ
+
+このアプリはGitHub Pagesで自動デプロイされます。
+
+### 自動デプロイの仕組み
+
+1. `claude/budget-management-app-tzLa3` または `main` ブランチにプッシュ
+2. GitHub Actionsが自動的にトリガーされる
+3. GitHub Pagesにデプロイ完了
+4. https://dyki-ogawa.github.io/dailyCost/ でアクセス可能
+
+### 初回セットアップ（リポジトリオーナーのみ）
+
+GitHubリポジトリの設定で以下を確認してください：
+
+1. Settings > Pages に移動
+2. Source: "GitHub Actions" を選択
+3. ワークフローが自動的に実行されます
 
 ## 📄 ライセンス
 

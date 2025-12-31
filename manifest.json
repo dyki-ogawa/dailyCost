@@ -1,0 +1,18 @@
+{
+  "name": "家計簿管理アプリ",
+  "short_name": "家計簿",
+  "description": "日々の支出を素早く記録・管理できるモバイル家計簿アプリ",
+  "start_url": "/dailyCost/",
+  "display": "standalone",
+  "background_color": "#00B4DB",
+  "theme_color": "#00B4DB",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>💰</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
