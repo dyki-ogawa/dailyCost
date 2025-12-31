@@ -342,20 +342,8 @@ function initChart() {
             },
             scales: {
                 y: {
-                    beginAtZero: true,
-                    ticks: {
-                        color: 'rgba(255, 255, 255, 0.6)',
-                        font: {
-                            size: 11
-                        },
-                        callback: function(value) {
-                            return '¥' + value.toLocaleString();
-                        }
-                    },
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.1)',
-                        drawBorder: false
-                    }
+                    display: false,
+                    beginAtZero: true
                 },
                 x: {
                     ticks: {
