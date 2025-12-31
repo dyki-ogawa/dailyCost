@@ -14,18 +14,18 @@ body {
 .app-container {
     max-width: 600px;
     margin: 0 auto;
-    padding: 20px 20px 100px 20px;
+    padding: 16px 16px 100px 16px;
 }
 
 /* 週間グラフセクション */
 .chart-section {
     background: transparent;
-    padding: 20px 0;
-    margin-bottom: 16px;
+    padding: 16px 0;
+    margin-bottom: 12px;
 }
 
 #weeklyChart {
-    max-height: 180px;
+    max-height: 140px;
 }
 
 /* サマリーセクション */
@@ -33,19 +33,19 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 0 24px 0;
-    margin-bottom: 20px;
+    padding: 0 0 16px 0;
+    margin-bottom: 16px;
 }
 
 .date-display {
-    font-size: 48px;
+    font-size: 36px;
     color: white;
     font-weight: 300;
     letter-spacing: -1px;
 }
 
 .total-amount {
-    font-size: 48px;
+    font-size: 36px;
     font-weight: 300;
     color: white;
     text-align: right;
@@ -54,46 +54,24 @@ body {
 
 /* 支出セクション */
 .expenses-section {
-    margin-top: 24px;
+    margin-top: 16px;
 }
 
 .expenses-list {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
 }
 
-/* レシート風カード */
+/* 支出カード */
 .expense-card {
     background: rgba(255, 255, 255, 0.95);
-    border-radius: 16px 16px 0 0;
-    padding: 20px;
+    border-radius: 12px;
+    padding: 14px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     position: relative;
     animation: slideIn 0.3s ease-out;
     backdrop-filter: blur(10px);
-}
-
-/* レシート風のギザギザ */
-.expense-card::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 0;
-    right: 0;
-    height: 10px;
-    background: linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.95) 25%,
-        transparent 25%
-    ),
-    linear-gradient(
-        -135deg,
-        rgba(255, 255, 255, 0.95) 25%,
-        transparent 25%
-    );
-    background-size: 20px 20px;
-    background-position: 0 0, 10px 0;
 }
 
 @keyframes slideIn {
@@ -111,11 +89,11 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    gap: 12px;
 }
 
 .category-icon {
-    font-size: 48px;
+    font-size: 36px;
     line-height: 1;
 }
 
@@ -123,27 +101,27 @@ body {
     flex: 1;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 
 .category-name {
-    font-size: 20px;
+    font-size: 16px;
     color: #333;
     font-weight: 400;
 }
 
 .expense-amount {
-    font-size: 36px;
+    font-size: 28px;
     font-weight: 300;
     color: #1a1a1a;
     letter-spacing: -1px;
 }
 
 .expense-memo {
-    margin-top: 12px;
-    padding-top: 12px;
+    margin-top: 10px;
+    padding-top: 10px;
     border-top: 1px solid rgba(0, 0, 0, 0.05);
-    font-size: 14px;
+    font-size: 13px;
     color: #666;
 }
 

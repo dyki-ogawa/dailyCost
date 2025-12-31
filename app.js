@@ -168,7 +168,7 @@ function updateTodayTotal() {
     const integerPart = Math.floor(total);
     const decimalPart = '.00';
 
-    document.getElementById('todayTotal').innerHTML = `¥${integerPart.toLocaleString()}<span style="font-size: 0.5em; opacity: 0.7;">${decimalPart}</span>`;
+    document.getElementById('todayTotal').innerHTML = `¥${integerPart.toLocaleString()}<span style="font-size: 0.6em; opacity: 0.7;">${decimalPart}</span>`;
 }
 
 // 支出一覧を更新
@@ -205,7 +205,7 @@ function createExpenseCard(expense) {
                     <div class="category-icon">${category.icon}</div>
                     <div class="category-name">${category.name}</div>
                 </div>
-                <div class="expense-amount">${integerPart.toLocaleString()}<span style="font-size: 0.6em; opacity: 0.6;">${decimalPart}</span></div>
+                <div class="expense-amount">${integerPart.toLocaleString()}<span style="font-size: 0.65em; opacity: 0.6;">${decimalPart}</span></div>
             </div>
             ${expense.memo ? `<div class="expense-memo">${expense.memo}</div>` : ''}
         </div>
