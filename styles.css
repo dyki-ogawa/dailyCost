@@ -1,0 +1,376 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+    background: linear-gradient(135deg, #00B4DB 0%, #0083B0 100%);
+    min-height: 100vh;
+    padding-bottom: 80px;
+}
+
+.app-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* ヘッダー */
+.app-header {
+    text-align: center;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.app-header h1 {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+/* 週間グラフセクション */
+.chart-section {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#weeklyChart {
+    max-height: 200px;
+}
+
+/* サマリーセクション */
+.summary-section {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.date-display {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.total-amount {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.total-amount .label {
+    font-size: 16px;
+    color: #666;
+}
+
+.total-amount .amount {
+    font-size: 28px;
+    font-weight: bold;
+    color: #0083B0;
+}
+
+/* 支出セクション */
+.expenses-section h2 {
+    color: white;
+    font-size: 20px;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.expenses-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* レシート風カード */
+.expense-card {
+    background: white;
+    border-radius: 12px 12px 0 0;
+    padding: 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    animation: slideIn 0.3s ease-out;
+}
+
+/* レシート風のギザギザ */
+.expense-card::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: linear-gradient(
+        135deg,
+        white 25%,
+        transparent 25%
+    ),
+    linear-gradient(
+        -135deg,
+        white 25%,
+        transparent 25%
+    );
+    background-size: 16px 16px;
+    background-position: 0 0, 8px 0;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.expense-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.category-icon {
+    font-size: 32px;
+}
+
+.category-info {
+    flex: 1;
+}
+
+.category-name {
+    font-size: 16px;
+    color: #666;
+    font-weight: 500;
+}
+
+.expense-amount {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+.expense-memo {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #999;
+    font-style: italic;
+}
+
+.expense-time {
+    font-size: 12px;
+    color: #999;
+    margin-top: 4px;
+}
+
+.empty-message {
+    text-align: center;
+    color: white;
+    font-size: 16px;
+    padding: 40px 20px;
+    opacity: 0.8;
+}
+
+/* フローティングアクションボタン */
+.fab {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #FF6B6B;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 100;
+}
+
+.fab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.fab:active {
+    transform: scale(0.95);
+}
+
+.fab-icon {
+    color: white;
+    font-size: 32px;
+    font-weight: 300;
+    line-height: 1;
+}
+
+/* モーダル */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal.show {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    background: white;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.modal-header h2 {
+    font-size: 20px;
+    color: #333;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #999;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.close-btn:hover {
+    background: #f5f5f5;
+}
+
+/* フォーム */
+form {
+    padding: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #00B4DB;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: #00B4DB;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.submit-btn:hover {
+    background: #0083B0;
+}
+
+.submit-btn:active {
+    transform: scale(0.98);
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 480px) {
+    .app-container {
+        padding: 12px;
+    }
+
+    .app-header h1 {
+        font-size: 24px;
+    }
+
+    .total-amount .amount {
+        font-size: 24px;
+    }
+
+    .fab {
+        width: 56px;
+        height: 56px;
+        bottom: 20px;
+        right: 20px;
+    }
+
+    .fab-icon {
+        font-size: 28px;
+    }
+}
