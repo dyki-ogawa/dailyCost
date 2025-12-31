@@ -1,11 +1,11 @@
 // カテゴリマスタ
 const CATEGORIES = [
-    { id: 'drink', name: '飲物', icon: '🥤' },
-    { id: 'food', name: '食費', icon: '🍱' },
+    { id: 'food', name: '飲食', icon: '🍱' },
+    { id: 'daily', name: '日用品', icon: '🪥' },
+    { id: 'hobby', name: '趣味', icon: '🤹' },
+    { id: 'books', name: '書籍', icon: '📚' },
+    { id: 'social', name: '交際費', icon: '🍻' },
     { id: 'transport', name: '交通費', icon: '🚃' },
-    { id: 'shopping', name: '買い物', icon: '🛍️' },
-    { id: 'entertainment', name: '娯楽', icon: '🎮' },
-    { id: 'utility', name: '光熱費', icon: '💡' },
     { id: 'health', name: '医療', icon: '🏥' },
     { id: 'other', name: 'その他', icon: '📝' }
 ];
