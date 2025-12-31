@@ -36,20 +36,28 @@
             <canvas id="weeklyChart"></canvas>
         </section>
 
-        <!-- サマリーセクション -->
-        <section class="summary-section">
-            <div class="date-display" id="dateDisplay"></div>
-            <div class="total-amount" id="todayTotal">¥0</div>
-        </section>
-
         <!-- 日付ナビゲーション -->
         <section class="date-navigation">
-            <button class="nav-btn" id="prevDayBtn">&lt; 前日</button>
-            <button class="nav-btn" id="nextDayBtn">翌日 &gt;</button>
+            <button class="nav-btn" id="prevDayBtn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </button>
+            <div class="date-display" id="dateDisplay"></div>
+            <button class="nav-btn" id="nextDayBtn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
         </section>
 
         <!-- 支出一覧 -->
         <section class="expenses-section">
+            <div class="total-summary">
+                <span class="total-icon">💰</span>
+                <span class="total-label">合計</span>
+                <span class="total-amount" id="todayTotal">¥0</span>
+            </div>
             <div id="expensesList" class="expenses-list">
                 <!-- 支出カードがここに動的に追加されます -->
             </div>
