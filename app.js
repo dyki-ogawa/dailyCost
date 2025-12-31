@@ -96,6 +96,22 @@ function setupEventListeners() {
     // フォーム送信
     document.getElementById('expenseForm').addEventListener('submit', handleSubmit);
 
+    // 編集モーダルを閉じる
+    document.getElementById('closeEditModal').addEventListener('click', closeEditModal);
+
+    // 編集モーダルの背景クリックで閉じる
+    document.getElementById('editExpenseModal').addEventListener('click', (e) => {
+        if (e.target.id === 'editExpenseModal') {
+            closeEditModal();
+        }
+    });
+
+    // 編集フォーム送信
+    document.getElementById('editExpenseForm').addEventListener('submit', handleEditSubmit);
+
+    // 削除ボタン
+    document.getElementById('deleteExpenseBtn').addEventListener('click', handleDelete);
+
     // 日付ナビゲーション
     document.getElementById('prevDayBtn').addEventListener('click', () => {
         currentDate.setDate(currentDate.getDate() - 1);
@@ -204,6 +220,14 @@ function updateExpensesList() {
     emptyMessage.style.display = 'none';
     listContainer.style.display = 'block';
     listContainer.innerHTML = dayExpenses.map(exp => createExpenseItem(exp)).join('');
+
+    // 各支出アイテムにクリックイベントを追加
+    document.querySelectorAll('.expense-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const expenseId = parseInt(item.dataset.expenseId);
+            openEditModal(expenseId);
+        });
+    });
 }
 
 // 支出アイテムのHTMLを生成
@@ -214,7 +238,7 @@ function createExpenseItem(expense) {
     const displayText = expense.memo || category.name;
 
     return `
-        <div class="expense-item">
+        <div class="expense-item" data-expense-id="${expense.id}" style="cursor: pointer;">
             <div class="category-icon">${category.icon}</div>
             <div class="expense-info">
                 <div class="category-name">${displayText}</div>
@@ -368,4 +392,104 @@ function getWeekData() {
     }
 
     return { labels, amounts, todayIndex };
+}
+
+// 編集用カテゴリボタンを設定
+function setupEditCategoryOptions() {
+    const categoryContainer = document.getElementById('editCategoryButtons');
+    const categoryInput = document.getElementById('editCategory');
+
+    // 既存のボタンをクリア
+    categoryContainer.innerHTML = '';
+
+    CATEGORIES.forEach((cat) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'category-btn';
+        button.dataset.categoryId = cat.id;
+
+        button.innerHTML = `
+            <div class="category-btn-icon">${cat.icon}</div>
+            <div class="category-btn-name">${cat.name}</div>
+        `;
+
+        // クリックイベント
+        button.addEventListener('click', () => {
+            // 全てのボタンから選択状態を削除
+            categoryContainer.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+
+            // クリックされたボタンを選択状態に
+            button.classList.add('selected');
+            categoryInput.value = cat.id;
+        });
+
+        categoryContainer.appendChild(button);
+    });
+}
+
+// 編集モーダルを開く
+function openEditModal(expenseId) {
+    const expense = expenses.find(exp => exp.id === expenseId);
+    if (!expense) return;
+
+    // 編集用カテゴリボタンを設定
+    setupEditCategoryOptions();
+
+    // フォームに値を設定
+    document.getElementById('editExpenseId').value = expense.id;
+    document.getElementById('editAmount').value = expense.amount;
+    document.getElementById('editCategory').value = expense.category;
+    document.getElementById('editMemo').value = expense.memo;
+
+    // カテゴリボタンの選択状態を設定
+    document.querySelectorAll('#editCategoryButtons .category-btn').forEach(btn => {
+        if (btn.dataset.categoryId === expense.category) {
+            btn.classList.add('selected');
+        } else {
+            btn.classList.remove('selected');
+        }
+    });
+
+    // モーダルを表示
+    document.getElementById('editExpenseModal').classList.add('show');
+}
+
+// 編集モーダルを閉じる
+function closeEditModal() {
+    document.getElementById('editExpenseModal').classList.remove('show');
+    document.getElementById('editExpenseForm').reset();
+}
+
+// 編集フォーム送信処理
+function handleEditSubmit(e) {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const expenseId = parseInt(document.getElementById('editExpenseId').value);
+
+    // 支出を検索して更新
+    const expenseIndex = expenses.findIndex(exp => exp.id === expenseId);
+    if (expenseIndex !== -1) {
+        expenses[expenseIndex].amount = parseInt(formData.get('amount'));
+        expenses[expenseIndex].category = formData.get('category');
+        expenses[expenseIndex].memo = formData.get('memo') || '';
+
+        saveExpenses();
+        updateDisplay();
+        closeEditModal();
+    }
+}
+
+// 支出を削除
+function handleDelete() {
+    const expenseId = parseInt(document.getElementById('editExpenseId').value);
+
+    if (confirm('この支出を削除しますか？')) {
+        expenses = expenses.filter(exp => exp.id !== expenseId);
+        saveExpenses();
+        updateDisplay();
+        closeEditModal();
+    }
 }

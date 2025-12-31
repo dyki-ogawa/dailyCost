@@ -77,6 +77,39 @@
                 </form>
             </div>
         </div>
+
+        <!-- 支出編集モーダル -->
+        <div class="modal" id="editExpenseModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>支出を編集</h2>
+                    <button class="close-btn" id="closeEditModal">&times;</button>
+                </div>
+                <form id="editExpenseForm">
+                    <input type="hidden" id="editExpenseId">
+                    <div class="form-group">
+                        <label for="editAmount">金額 *</label>
+                        <input type="number" id="editAmount" name="amount" required min="1" placeholder="1000">
+                    </div>
+
+                    <div class="form-group">
+                        <label>カテゴリ *</label>
+                        <input type="hidden" id="editCategory" name="category" required>
+                        <div id="editCategoryButtons" class="category-buttons">
+                            <!-- カテゴリボタンがここに動的に追加されます -->
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editMemo">メモ</label>
+                        <textarea id="editMemo" name="memo" rows="3" placeholder="メモ（任意）"></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn">更新する</button>
+                    <button type="button" class="delete-btn" id="deleteExpenseBtn">削除する</button>
+                </form>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
