@@ -184,30 +184,32 @@ function updateExpensesList() {
 
     if (todayExpenses.length === 0) {
         listContainer.innerHTML = '';
+        listContainer.style.display = 'none';
         emptyMessage.style.display = 'block';
         return;
     }
 
     emptyMessage.style.display = 'none';
-    listContainer.innerHTML = todayExpenses.map(exp => createExpenseCard(exp)).join('');
+    listContainer.style.display = 'block';
+    listContainer.innerHTML = todayExpenses.map(exp => createExpenseItem(exp)).join('');
 }
 
-// 支出カードのHTMLを生成
-function createExpenseCard(expense) {
+// 支出アイテムのHTMLを生成
+function createExpenseItem(expense) {
     const category = CATEGORIES.find(cat => cat.id === expense.category);
     const integerPart = Math.floor(expense.amount);
     const decimalPart = '.00';
 
+    // メモがあればメモを表示、なければカテゴリ名を表示
+    const displayText = expense.memo || category.name;
+
     return `
-        <div class="expense-card">
-            <div class="expense-card-header">
-                <div class="category-info">
-                    <div class="category-icon">${category.icon}</div>
-                    <div class="category-name">${category.name}</div>
-                </div>
-                <div class="expense-amount">${integerPart.toLocaleString()}<span style="font-size: 0.65em; opacity: 0.6;">${decimalPart}</span></div>
+        <div class="expense-item">
+            <div class="category-icon">${category.icon}</div>
+            <div class="expense-info">
+                <div class="category-name">${displayText}</div>
             </div>
-            ${expense.memo ? `<div class="expense-memo">${expense.memo}</div>` : ''}
+            <div class="expense-amount">${integerPart.toLocaleString()}<span style="font-size: 0.65em; opacity: 0.6;">${decimalPart}</span></div>
         </div>
     `;
 }

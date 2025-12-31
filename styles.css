@@ -25,7 +25,7 @@ body {
 }
 
 #weeklyChart {
-    max-height: 140px;
+    max-height: 80px;
 }
 
 /* サマリーセクション */
@@ -58,20 +58,26 @@ body {
 }
 
 .expenses-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-/* 支出カード */
-.expense-card {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 12px;
-    padding: 14px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    position: relative;
-    animation: slideIn 0.3s ease-out;
     backdrop-filter: blur(10px);
+    overflow: hidden;
+}
+
+/* 支出アイテム */
+.expense-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    gap: 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    animation: slideIn 0.3s ease-out;
+}
+
+.expense-item:last-child {
+    border-bottom: none;
 }
 
 @keyframes slideIn {
@@ -85,50 +91,36 @@ body {
     }
 }
 
-.expense-card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-}
-
 .category-icon {
-    font-size: 36px;
+    font-size: 24px;
     line-height: 1;
+    flex-shrink: 0;
 }
 
-.category-info {
+.expense-info {
     flex: 1;
     display: flex;
     align-items: center;
     gap: 10px;
+    min-width: 0;
 }
 
 .category-name {
-    font-size: 16px;
-    color: #333;
+    font-size: 14px;
+    color: #666;
     font-weight: 400;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .expense-amount {
-    font-size: 28px;
-    font-weight: 300;
+    font-size: 20px;
+    font-weight: 400;
     color: #1a1a1a;
-    letter-spacing: -1px;
-}
-
-.expense-memo {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-    font-size: 13px;
-    color: #666;
-}
-
-.expense-time {
-    font-size: 11px;
-    color: #999;
-    margin-top: 8px;
+    letter-spacing: -0.5px;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .empty-message {
