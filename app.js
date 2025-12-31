@@ -39,14 +39,41 @@ function saveExpenses() {
     localStorage.setItem('expenses', JSON.stringify(expenses));
 }
 
-// カテゴリの選択肢を設定
+// カテゴリボタンを設定
 function setupCategoryOptions() {
-    const categorySelect = document.getElementById('category');
-    CATEGORIES.forEach(cat => {
-        const option = document.createElement('option');
-        option.value = cat.id;
-        option.textContent = `${cat.icon} ${cat.name}`;
-        categorySelect.appendChild(option);
+    const categoryContainer = document.getElementById('categoryButtons');
+    const categoryInput = document.getElementById('category');
+
+    CATEGORIES.forEach((cat, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'category-btn';
+        button.dataset.categoryId = cat.id;
+
+        button.innerHTML = `
+            <div class="category-btn-icon">${cat.icon}</div>
+            <div class="category-btn-name">${cat.name}</div>
+        `;
+
+        // クリックイベント
+        button.addEventListener('click', () => {
+            // 全てのボタンから選択状態を削除
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+
+            // クリックされたボタンを選択状態に
+            button.classList.add('selected');
+            categoryInput.value = cat.id;
+        });
+
+        categoryContainer.appendChild(button);
+
+        // デフォルトで最初のカテゴリ（左上）を選択
+        if (index === 0) {
+            button.classList.add('selected');
+            categoryInput.value = cat.id;
+        }
     });
 }
 
@@ -78,6 +105,17 @@ function openModal() {
 function closeModal() {
     document.getElementById('addExpenseModal').classList.remove('show');
     document.getElementById('expenseForm').reset();
+
+    // カテゴリボタンをリセット（最初のカテゴリを選択状態に）
+    const categoryButtons = document.querySelectorAll('.category-btn');
+    categoryButtons.forEach((btn, index) => {
+        if (index === 0) {
+            btn.classList.add('selected');
+            document.getElementById('category').value = CATEGORIES[0].id;
+        } else {
+            btn.classList.remove('selected');
+        }
+    });
 }
 
 // フォーム送信処理
