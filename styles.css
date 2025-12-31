@@ -146,6 +146,10 @@ body {
     flex: 1;
 }
 
+.day-of-week {
+    font-size: 24px;
+}
+
 .nav-btn {
     width: 48px;
     height: 48px;

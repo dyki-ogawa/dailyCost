@@ -234,7 +234,7 @@ function updateDateDisplay() {
     const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
     const dayName = dayNames[dayOfWeek];
 
-    document.getElementById('dateDisplay').textContent = `${month}/${day}（${dayName}）`;
+    document.getElementById('dateDisplay').innerHTML = `${month}/${day}<span class="day-of-week">（${dayName}）</span>`;
 }
 
 // 選択日の合計を更新
