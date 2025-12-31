@@ -14,10 +14,17 @@ const CATEGORIES = [
 let chart = null;
 let expenses = [];
 let currentDate = new Date(); // 現在表示している日付
+let currentUser = null; // 現在ログインしているユーザー
+let unsubscribeSnapshot = null; // Firestoreリアルタイムリスナーの解除関数
 
 // ページ読み込み時の初期化
 document.addEventListener('DOMContentLoaded', () => {
-    initApp();
+    // Firebase認証状態の監視を開始
+    auth.onAuthStateChanged((user) => {
+        currentUser = user;
+        updateAuthUI();
+        initApp();
+    });
 });
 
 // アプリの初期化
@@ -29,15 +36,25 @@ function initApp() {
     initChart();
 }
 
-// LocalStorageから支出データを読み込み
+// 支出データを読み込み（Firebase または LocalStorage）
 function loadExpenses() {
-    const stored = localStorage.getItem('expenses');
-    expenses = stored ? JSON.parse(stored) : [];
+    if (currentUser) {
+        // ログイン中はFirestoreからリアルタイムで読み込み
+        loadExpensesFromFirestore();
+    } else {
+        // 未ログインはLocalStorageから読み込み
+        const stored = localStorage.getItem('expenses');
+        expenses = stored ? JSON.parse(stored) : [];
+    }
 }
 
-// LocalStorageに支出データを保存
+// 支出データを保存（Firebase または LocalStorage）
 function saveExpenses() {
-    localStorage.setItem('expenses', JSON.stringify(expenses));
+    if (!currentUser) {
+        // 未ログインの場合のみLocalStorageに保存
+        localStorage.setItem('expenses', JSON.stringify(expenses));
+    }
+    // ログイン中はFirestoreに自動保存されるので何もしない
 }
 
 // カテゴリボタンを設定
@@ -80,6 +97,10 @@ function setupCategoryOptions() {
 
 // イベントリスナーの設定
 function setupEventListeners() {
+    // ログイン/ログアウト
+    document.getElementById('googleLoginBtn').addEventListener('click', handleGoogleLogin);
+    document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+
     // FABボタン
     document.getElementById('fabBtn').addEventListener('click', openModal);
 
@@ -147,7 +168,7 @@ function closeModal() {
 }
 
 // フォーム送信処理
-function handleSubmit(e) {
+async function handleSubmit(e) {
     e.preventDefault();
 
     const formData = new FormData(e.target);
@@ -164,9 +185,16 @@ function handleSubmit(e) {
         memo: formData.get('memo') || ''
     };
 
-    expenses.unshift(expense); // 最新を先頭に
-    saveExpenses();
-    updateDisplay();
+    if (currentUser) {
+        // Firestoreに保存
+        await saveExpenseToFirestore(expense);
+    } else {
+        // LocalStorageに保存
+        expenses.unshift(expense);
+        saveExpenses();
+        updateDisplay();
+    }
+
     closeModal();
 }
 
@@ -463,7 +491,7 @@ function closeEditModal() {
 }
 
 // 編集フォーム送信処理
-function handleEditSubmit(e) {
+async function handleEditSubmit(e) {
     e.preventDefault();
 
     const formData = new FormData(e.target);
@@ -472,24 +500,214 @@ function handleEditSubmit(e) {
     // 支出を検索して更新
     const expenseIndex = expenses.findIndex(exp => exp.id === expenseId);
     if (expenseIndex !== -1) {
-        expenses[expenseIndex].amount = parseInt(formData.get('amount'));
-        expenses[expenseIndex].category = formData.get('category');
-        expenses[expenseIndex].memo = formData.get('memo') || '';
+        const updatedExpense = {
+            ...expenses[expenseIndex],
+            amount: parseInt(formData.get('amount')),
+            category: formData.get('category'),
+            memo: formData.get('memo') || ''
+        };
 
-        saveExpenses();
-        updateDisplay();
+        if (currentUser) {
+            // Firestoreで更新
+            await updateExpenseInFirestore(updatedExpense);
+        } else {
+            // LocalStorageで更新
+            expenses[expenseIndex] = updatedExpense;
+            saveExpenses();
+            updateDisplay();
+        }
+
         closeEditModal();
     }
 }
 
 // 支出を削除
-function handleDelete() {
+async function handleDelete() {
     const expenseId = parseInt(document.getElementById('editExpenseId').value);
 
     if (confirm('この支出を削除しますか？')) {
-        expenses = expenses.filter(exp => exp.id !== expenseId);
-        saveExpenses();
-        updateDisplay();
+        if (currentUser) {
+            // Firestoreから削除
+            await deleteExpenseFromFirestore(expenseId);
+        } else {
+            // LocalStorageから削除
+            expenses = expenses.filter(exp => exp.id !== expenseId);
+            saveExpenses();
+            updateDisplay();
+        }
+
         closeEditModal();
+    }
+}
+
+// ========================
+// Firebase関連の関数
+// ========================
+
+// 認証UIを更新
+function updateAuthUI() {
+    const loggedOutSection = document.getElementById('authLoggedOut');
+    const loggedInSection = document.getElementById('authLoggedIn');
+
+    if (currentUser) {
+        // ログイン中
+        loggedOutSection.style.display = 'none';
+        loggedInSection.style.display = 'flex';
+
+        document.getElementById('userPhoto').src = currentUser.photoURL || '';
+        document.getElementById('userName').textContent = currentUser.displayName || 'ユーザー';
+    } else {
+        // 未ログイン
+        loggedOutSection.style.display = 'block';
+        loggedInSection.style.display = 'none';
+    }
+}
+
+// Googleログイン処理
+async function handleGoogleLogin() {
+    try {
+        const result = await auth.signInWithPopup(googleProvider);
+
+        // LocalStorageのデータをFirestoreに移行
+        const localData = localStorage.getItem('expenses');
+        if (localData) {
+            const localExpenses = JSON.parse(localData);
+            if (localExpenses.length > 0 && confirm('ローカルに保存されているデータをクラウドに移行しますか？')) {
+                await migrateLocalDataToFirestore(localExpenses);
+                localStorage.removeItem('expenses');
+            }
+        }
+    } catch (error) {
+        console.error('ログインエラー:', error);
+        alert('ログインに失敗しました。もう一度お試しください。');
+    }
+}
+
+// ログアウト処理
+async function handleLogout() {
+    if (confirm('ログアウトしますか？')) {
+        try {
+            // Firestoreリスナーを解除
+            if (unsubscribeSnapshot) {
+                unsubscribeSnapshot();
+                unsubscribeSnapshot = null;
+            }
+
+            await auth.signOut();
+            expenses = [];
+            updateDisplay();
+        } catch (error) {
+            console.error('ログアウトエラー:', error);
+            alert('ログアウトに失敗しました。');
+        }
+    }
+}
+
+// Firestoreからデータを読み込み（リアルタイム）
+function loadExpensesFromFirestore() {
+    if (!currentUser) return;
+
+    // 既存のリスナーがあれば解除
+    if (unsubscribeSnapshot) {
+        unsubscribeSnapshot();
+    }
+
+    // ユーザーの支出コレクションをリアルタイム監視
+    unsubscribeSnapshot = db
+        .collection('users')
+        .doc(currentUser.uid)
+        .collection('expenses')
+        .onSnapshot((snapshot) => {
+            expenses = [];
+            snapshot.forEach((doc) => {
+                expenses.push(doc.data());
+            });
+
+            // 日付順にソート（新しい順）
+            expenses.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            updateDisplay();
+        }, (error) => {
+            console.error('Firestoreデータ読み込みエラー:', error);
+        });
+}
+
+// Firestoreに支出を保存
+async function saveExpenseToFirestore(expense) {
+    if (!currentUser) return;
+
+    try {
+        await db
+            .collection('users')
+            .doc(currentUser.uid)
+            .collection('expenses')
+            .doc(expense.id.toString())
+            .set(expense);
+    } catch (error) {
+        console.error('Firestore保存エラー:', error);
+        alert('データの保存に失敗しました。');
+    }
+}
+
+// Firestoreで支出を更新
+async function updateExpenseInFirestore(expense) {
+    if (!currentUser) return;
+
+    try {
+        await db
+            .collection('users')
+            .doc(currentUser.uid)
+            .collection('expenses')
+            .doc(expense.id.toString())
+            .update({
+                amount: expense.amount,
+                category: expense.category,
+                memo: expense.memo
+            });
+    } catch (error) {
+        console.error('Firestore更新エラー:', error);
+        alert('データの更新に失敗しました。');
+    }
+}
+
+// Firestoreから支出を削除
+async function deleteExpenseFromFirestore(expenseId) {
+    if (!currentUser) return;
+
+    try {
+        await db
+            .collection('users')
+            .doc(currentUser.uid)
+            .collection('expenses')
+            .doc(expenseId.toString())
+            .delete();
+    } catch (error) {
+        console.error('Firestore削除エラー:', error);
+        alert('データの削除に失敗しました。');
+    }
+}
+
+// LocalStorageのデータをFirestoreに移行
+async function migrateLocalDataToFirestore(localExpenses) {
+    if (!currentUser) return;
+
+    const batch = db.batch();
+
+    localExpenses.forEach((expense) => {
+        const docRef = db
+            .collection('users')
+            .doc(currentUser.uid)
+            .collection('expenses')
+            .doc(expense.id.toString());
+
+        batch.set(docRef, expense);
+    });
+
+    try {
+        await batch.commit();
+        console.log('データ移行完了:', localExpenses.length, '件');
+    } catch (error) {
+        console.error('データ移行エラー:', error);
+        alert('データの移行に失敗しました。');
     }
 }

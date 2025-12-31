@@ -17,6 +17,100 @@ body {
     padding: 16px 16px 100px 16px;
 }
 
+/* ログインセクション */
+.auth-section {
+    margin-bottom: 16px;
+}
+
+.auth-logged-out {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.google-login-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 24px;
+    background: white;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #3c4043;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.google-login-btn:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    border-color: #d2d4d6;
+}
+
+.google-login-btn:active {
+    transform: scale(0.98);
+}
+
+.auth-note {
+    margin-top: 12px;
+    font-size: 12px;
+    color: #666;
+}
+
+.auth-logged-in {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-photo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #00B4DB;
+}
+
+.user-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+.logout-btn {
+    padding: 8px 16px;
+    background: rgba(220, 53, 69, 0.1);
+    border: 1px solid #dc3545;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #dc3545;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+    background: #dc3545;
+    color: white;
+}
+
+.logout-btn:active {
+    transform: scale(0.95);
+}
+
 /* 週間グラフセクション */
 .chart-section {
     background: transparent;

@@ -77,9 +77,82 @@ npx serve
 
 ## 💾 データ保存
 
-- ブラウザのLocalStorageを使用してデータを保存
-- オフラインでも動作
-- データはブラウザに保存されるため、ブラウザのデータを削除すると消えます
+- **Googleアカウントでログイン**して複数端末でデータを同期
+- Firebase Firestore を使用してクラウドにデータを保存
+- オフラインでも動作（オンライン時に自動同期）
+- ログインしない場合は、ブラウザのLocalStorageにローカル保存
+
+## 🔧 Firebase設定（初回のみ）
+
+このアプリを使用するには、Firebaseプロジェクトの設定が必要です。
+
+### 1. Firebaseプロジェクトを作成
+
+1. [Firebase Console](https://console.firebase.google.com/) にアクセス
+2. 「プロジェクトを追加」をクリック
+3. プロジェクト名を入力（例: dailyCost-app）
+4. Google アナリティクスは任意（不要な場合は無効化）
+5. プロジェクトを作成
+
+### 2. ウェブアプリを追加
+
+1. プロジェクトのホーム画面で「ウェブ」アイコン（</>）をクリック
+2. アプリのニックネームを入力（例: 家計簿アプリ）
+3. Firebase Hosting の設定は不要（スキップ）
+4. 「アプリを登録」をクリック
+
+### 3. 設定情報を取得
+
+表示された `firebaseConfig` の内容を `firebase-config.js` にコピーします：
+
+```javascript
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+```
+
+### 4. Google認証を有効化
+
+1. Firebase Console > Authentication をクリック
+2. 「始める」をクリック
+3. Sign-in method タブを選択
+4. 「Google」を選択して有効化
+5. プロジェクトのサポートメールを選択
+6. 「保存」をクリック
+
+### 5. Firestore Database を作成
+
+1. Firebase Console > Firestore Database をクリック
+2. 「データベースの作成」をクリック
+3. **本番環境モード**を選択（セキュリティルールは後で設定）
+4. ロケーションを選択（asia-northeast1 推奨）
+5. 「有効にする」をクリック
+
+### 6. Firestoreセキュリティルールを設定
+
+Firestore Database > ルール タブで以下のルールを設定：
+
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId}/expenses/{expenseId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
+```
+
+このルールにより、ログインユーザーは自分のデータのみ読み書きできます。
+
+### 7. 完了！
+
+`firebase-config.js` に設定を記入したら、アプリをデプロイして使用できます。
 
 ## 🛠️ 技術スタック
 
@@ -87,7 +160,9 @@ npx serve
 - CSS3 (グラデーション、アニメーション)
 - JavaScript (ES6+)
 - Chart.js (グラフ表示)
-- LocalStorage (データ永続化)
+- Firebase Authentication (Google認証)
+- Firebase Firestore (クラウドデータベース)
+- LocalStorage (ローカルデータ永続化)
 
 ## 📁 ファイル構成
 
@@ -99,6 +174,7 @@ dailyCost/
 ├── index.html               # メインHTMLファイル
 ├── styles.css               # スタイルシート
 ├── app.js                   # JavaScriptロジック
+├── firebase-config.js       # Firebase設定ファイル
 ├── manifest.json            # PWAマニフェスト
 └── README.md                # このファイル
 ```
