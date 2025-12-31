@@ -13,6 +13,7 @@ const CATEGORIES = [
 // グローバル変数
 let chart = null;
 let expenses = [];
+let currentDate = new Date(); // 現在表示している日付
 
 // ページ読み込み時の初期化
 document.addEventListener('DOMContentLoaded', () => {
@@ -94,6 +95,17 @@ function setupEventListeners() {
 
     // フォーム送信
     document.getElementById('expenseForm').addEventListener('submit', handleSubmit);
+
+    // 日付ナビゲーション
+    document.getElementById('prevDayBtn').addEventListener('click', () => {
+        currentDate.setDate(currentDate.getDate() - 1);
+        updateDisplay();
+    });
+
+    document.getElementById('nextDayBtn').addEventListener('click', () => {
+        currentDate.setDate(currentDate.getDate() + 1);
+        updateDisplay();
+    });
 }
 
 // モーダルを開く
@@ -123,9 +135,14 @@ function handleSubmit(e) {
     e.preventDefault();
 
     const formData = new FormData(e.target);
+
+    // 現在表示している日付で支出を作成
+    const expenseDate = new Date(currentDate);
+    expenseDate.setHours(new Date().getHours(), new Date().getMinutes(), new Date().getSeconds());
+
     const expense = {
         id: Date.now(),
-        date: new Date().toISOString(),
+        date: expenseDate.toISOString(),
         amount: parseInt(formData.get('amount')),
         category: formData.get('category'),
         memo: formData.get('memo') || ''
@@ -147,22 +164,21 @@ function updateDisplay() {
 
 // 日付表示を更新
 function updateDateDisplay() {
-    const today = new Date();
-    const month = today.getMonth() + 1;
-    const day = today.getDate();
+    const month = currentDate.getMonth() + 1;
+    const day = currentDate.getDate();
 
     document.getElementById('dateDisplay').textContent = `${month}/${day}`;
 }
 
-// 今日の合計を更新
+// 選択日の合計を更新
 function updateTodayTotal() {
-    const today = new Date().toDateString();
-    const todayExpenses = expenses.filter(exp => {
+    const selectedDate = currentDate.toDateString();
+    const dayExpenses = expenses.filter(exp => {
         const expDate = new Date(exp.date).toDateString();
-        return expDate === today;
+        return expDate === selectedDate;
     });
 
-    const total = todayExpenses.reduce((sum, exp) => sum + exp.amount, 0);
+    const total = dayExpenses.reduce((sum, exp) => sum + exp.amount, 0);
 
     // 金額を整数部分と小数部分に分ける
     const integerPart = Math.floor(total);
@@ -173,16 +189,16 @@ function updateTodayTotal() {
 
 // 支出一覧を更新
 function updateExpensesList() {
-    const today = new Date().toDateString();
-    const todayExpenses = expenses.filter(exp => {
+    const selectedDate = currentDate.toDateString();
+    const dayExpenses = expenses.filter(exp => {
         const expDate = new Date(exp.date).toDateString();
-        return expDate === today;
+        return expDate === selectedDate;
     });
 
     const listContainer = document.getElementById('expensesList');
     const emptyMessage = document.getElementById('emptyMessage');
 
-    if (todayExpenses.length === 0) {
+    if (dayExpenses.length === 0) {
         listContainer.innerHTML = '';
         listContainer.style.display = 'none';
         emptyMessage.style.display = 'block';
@@ -191,7 +207,7 @@ function updateExpensesList() {
 
     emptyMessage.style.display = 'none';
     listContainer.style.display = 'block';
-    listContainer.innerHTML = todayExpenses.map(exp => createExpenseItem(exp)).join('');
+    listContainer.innerHTML = dayExpenses.map(exp => createExpenseItem(exp)).join('');
 }
 
 // 支出アイテムのHTMLを生成
