@@ -12,12 +12,13 @@
 // 8. Firestore Database を作成（テストモードで開始）
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyB8Ynq3RAjFn3_nZz2X2AoDgPLJC0NZ5ls",
+  authDomain: "dailycost-b3c9a.firebaseapp.com",
+  projectId: "dailycost-b3c9a",
+  storageBucket: "dailycost-b3c9a.firebasestorage.app",
+  messagingSenderId: "211146515058",
+  appId: "1:211146515058:web:407441ed78f6c8a38758eb",
+  measurementId: "G-98Z6LV9NRD"
 };
 
 // Firebase の初期化
