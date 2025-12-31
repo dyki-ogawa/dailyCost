@@ -112,7 +112,10 @@ function setupCategoryOptions() {
 function setupEventListeners() {
     // ログイン/ログアウト
     document.getElementById('googleLoginBtn').addEventListener('click', handleGoogleLogin);
-    document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+    document.getElementById('logoutBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        handleLogout();
+    });
 
     // FABボタン
     document.getElementById('fabBtn').addEventListener('click', openModal);
@@ -564,20 +567,17 @@ async function handleDelete() {
 
 // 認証UIを更新
 function updateAuthUI() {
-    const loggedOutSection = document.getElementById('authLoggedOut');
-    const loggedInSection = document.getElementById('authLoggedIn');
+    const loginScreen = document.getElementById('loginScreen');
+    const appContainer = document.getElementById('appContainer');
 
     if (currentUser) {
-        // ログイン中
-        loggedOutSection.style.display = 'none';
-        loggedInSection.style.display = 'flex';
-
-        document.getElementById('userPhoto').src = currentUser.photoURL || '';
-        document.getElementById('userName').textContent = currentUser.displayName || 'ユーザー';
+        // ログイン中 - メインアプリを表示
+        loginScreen.style.display = 'none';
+        appContainer.style.display = 'block';
     } else {
-        // 未ログイン
-        loggedOutSection.style.display = 'block';
-        loggedInSection.style.display = 'none';
+        // 未ログイン - ログイン画面を表示
+        loginScreen.style.display = 'flex';
+        appContainer.style.display = 'none';
     }
 }
 
