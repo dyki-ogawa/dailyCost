@@ -180,11 +180,7 @@ function updateTodayTotal() {
 
     const total = dayExpenses.reduce((sum, exp) => sum + exp.amount, 0);
 
-    // 金額を整数部分と小数部分に分ける
-    const integerPart = Math.floor(total);
-    const decimalPart = '.00';
-
-    document.getElementById('todayTotal').innerHTML = `¥${integerPart.toLocaleString()}<span style="font-size: 0.6em; opacity: 0.7;">${decimalPart}</span>`;
+    document.getElementById('todayTotal').textContent = `¥${total.toLocaleString()}`;
 }
 
 // 支出一覧を更新
@@ -213,8 +209,6 @@ function updateExpensesList() {
 // 支出アイテムのHTMLを生成
 function createExpenseItem(expense) {
     const category = CATEGORIES.find(cat => cat.id === expense.category);
-    const integerPart = Math.floor(expense.amount);
-    const decimalPart = '.00';
 
     // メモがあればメモを表示、なければカテゴリ名を表示
     const displayText = expense.memo || category.name;
@@ -225,7 +219,7 @@ function createExpenseItem(expense) {
             <div class="expense-info">
                 <div class="category-name">${displayText}</div>
             </div>
-            <div class="expense-amount">${integerPart.toLocaleString()}<span style="font-size: 0.65em; opacity: 0.6;">${decimalPart}</span></div>
+            <div class="expense-amount">${expense.amount.toLocaleString()}</div>
         </div>
     `;
 }
