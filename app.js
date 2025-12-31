@@ -16,6 +16,7 @@ let expenses = [];
 let currentDate = new Date(); // 現在表示している日付
 let currentUser = null; // 現在ログインしているユーザー
 let unsubscribeSnapshot = null; // Firestoreリアルタイムリスナーの解除関数
+let isInitialized = false; // アプリが初期化済みかどうかのフラグ
 
 // ページ読み込み時の初期化
 document.addEventListener('DOMContentLoaded', () => {
@@ -23,15 +24,24 @@ document.addEventListener('DOMContentLoaded', () => {
     auth.onAuthStateChanged((user) => {
         currentUser = user;
         updateAuthUI();
-        initApp();
+
+        if (!isInitialized) {
+            // 初回のみ実行
+            initApp();
+            isInitialized = true;
+        } else {
+            // 2回目以降（ログイン/ログアウト時）は必要な処理のみ
+            loadExpenses();
+            updateDisplay();
+        }
     });
 });
 
 // アプリの初期化
 function initApp() {
-    loadExpenses();
     setupCategoryOptions();
     setupEventListeners();
+    loadExpenses();
     updateDisplay();
     initChart();
 }
@@ -62,6 +72,9 @@ function setupCategoryOptions() {
     const categoryContainer = document.getElementById('categoryButtons');
     const categoryInput = document.getElementById('category');
 
+    // 既存のボタンをクリア
+    categoryContainer.innerHTML = '';
+
     CATEGORIES.forEach((cat, index) => {
         const button = document.createElement('button');
         button.type = 'button';
@@ -76,7 +89,7 @@ function setupCategoryOptions() {
         // クリックイベント
         button.addEventListener('click', () => {
             // 全てのボタンから選択状態を削除
-            document.querySelectorAll('.category-btn').forEach(btn => {
+            categoryContainer.querySelectorAll('.category-btn').forEach(btn => {
                 btn.classList.remove('selected');
             });
 
@@ -279,6 +292,11 @@ function createExpenseItem(expense) {
 // グラフの初期化
 function initChart() {
     const ctx = document.getElementById('weeklyChart').getContext('2d');
+
+    // 既存のチャートがあれば破棄
+    if (chart) {
+        chart.destroy();
+    }
 
     chart = new Chart(ctx, {
         type: 'line',
