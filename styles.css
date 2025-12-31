@@ -14,111 +14,86 @@ body {
 .app-container {
     max-width: 600px;
     margin: 0 auto;
-    padding: 20px;
-}
-
-/* ヘッダー */
-.app-header {
-    text-align: center;
-    color: white;
-    margin-bottom: 20px;
-}
-
-.app-header h1 {
-    font-size: 28px;
-    font-weight: bold;
+    padding: 20px 20px 100px 20px;
 }
 
 /* 週間グラフセクション */
 .chart-section {
-    background: white;
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: transparent;
+    padding: 20px 0;
+    margin-bottom: 16px;
 }
 
 #weeklyChart {
-    max-height: 200px;
+    max-height: 180px;
 }
 
 /* サマリーセクション */
 .summary-section {
-    background: white;
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.date-display {
-    font-size: 18px;
-    color: #333;
-    margin-bottom: 12px;
-    font-weight: 600;
-}
-
-.total-amount {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0 0 24px 0;
+    margin-bottom: 20px;
 }
 
-.total-amount .label {
-    font-size: 16px;
-    color: #666;
+.date-display {
+    font-size: 48px;
+    color: white;
+    font-weight: 300;
+    letter-spacing: -1px;
 }
 
-.total-amount .amount {
-    font-size: 28px;
-    font-weight: bold;
-    color: #0083B0;
+.total-amount {
+    font-size: 48px;
+    font-weight: 300;
+    color: white;
+    text-align: right;
+    letter-spacing: -2px;
 }
 
 /* 支出セクション */
-.expenses-section h2 {
-    color: white;
-    font-size: 20px;
-    margin-bottom: 16px;
-    font-weight: 600;
+.expenses-section {
+    margin-top: 24px;
 }
 
 .expenses-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
 }
 
 /* レシート風カード */
 .expense-card {
-    background: white;
-    border-radius: 12px 12px 0 0;
-    padding: 16px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px 16px 0 0;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     position: relative;
     animation: slideIn 0.3s ease-out;
+    backdrop-filter: blur(10px);
 }
 
 /* レシート風のギザギザ */
 .expense-card::after {
     content: '';
     position: absolute;
-    bottom: -8px;
+    bottom: -10px;
     left: 0;
     right: 0;
-    height: 8px;
+    height: 10px;
     background: linear-gradient(
         135deg,
-        white 25%,
+        rgba(255, 255, 255, 0.95) 25%,
         transparent 25%
     ),
     linear-gradient(
         -135deg,
-        white 25%,
+        rgba(255, 255, 255, 0.95) 25%,
         transparent 25%
     );
-    background-size: 16px 16px;
-    background-position: 0 0, 8px 0;
+    background-size: 20px 20px;
+    background-position: 0 0, 10px 0;
 }
 
 @keyframes slideIn {
@@ -135,41 +110,47 @@ body {
 .expense-card-header {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 8px;
+    justify-content: space-between;
+    gap: 16px;
 }
 
 .category-icon {
-    font-size: 32px;
+    font-size: 48px;
+    line-height: 1;
 }
 
 .category-info {
     flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
 .category-name {
-    font-size: 16px;
-    color: #666;
-    font-weight: 500;
+    font-size: 20px;
+    color: #333;
+    font-weight: 400;
 }
 
 .expense-amount {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
+    font-size: 36px;
+    font-weight: 300;
+    color: #1a1a1a;
+    letter-spacing: -1px;
 }
 
 .expense-memo {
-    margin-top: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
     font-size: 14px;
-    color: #999;
-    font-style: italic;
+    color: #666;
 }
 
 .expense-time {
-    font-size: 12px;
+    font-size: 11px;
     color: #999;
-    margin-top: 4px;
+    margin-top: 8px;
 }
 
 .empty-message {

@@ -148,11 +148,10 @@ function updateDisplay() {
 // 日付表示を更新
 function updateDateDisplay() {
     const today = new Date();
-    const dateStr = `${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日`;
-    const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
-    const dayStr = dayNames[today.getDay()];
+    const month = today.getMonth() + 1;
+    const day = today.getDate();
 
-    document.getElementById('dateDisplay').textContent = `${dateStr}(${dayStr})`;
+    document.getElementById('dateDisplay').textContent = `${month}/${day}`;
 }
 
 // 今日の合計を更新
@@ -164,7 +163,12 @@ function updateTodayTotal() {
     });
 
     const total = todayExpenses.reduce((sum, exp) => sum + exp.amount, 0);
-    document.getElementById('todayTotal').textContent = `¥${total.toLocaleString()}`;
+
+    // 金額を整数部分と小数部分に分ける
+    const integerPart = Math.floor(total);
+    const decimalPart = '.00';
+
+    document.getElementById('todayTotal').innerHTML = `¥${integerPart.toLocaleString()}<span style="font-size: 0.5em; opacity: 0.7;">${decimalPart}</span>`;
 }
 
 // 支出一覧を更新
@@ -191,20 +195,17 @@ function updateExpensesList() {
 // 支出カードのHTMLを生成
 function createExpenseCard(expense) {
     const category = CATEGORIES.find(cat => cat.id === expense.category);
-    const time = new Date(expense.date).toLocaleTimeString('ja-JP', {
-        hour: '2-digit',
-        minute: '2-digit'
-    });
+    const integerPart = Math.floor(expense.amount);
+    const decimalPart = '.00';
 
     return `
         <div class="expense-card">
             <div class="expense-card-header">
-                <div class="category-icon">${category.icon}</div>
                 <div class="category-info">
+                    <div class="category-icon">${category.icon}</div>
                     <div class="category-name">${category.name}</div>
-                    <div class="expense-time">${time}</div>
                 </div>
-                <div class="expense-amount">¥${expense.amount.toLocaleString()}</div>
+                <div class="expense-amount">${integerPart.toLocaleString()}<span style="font-size: 0.6em; opacity: 0.6;">${decimalPart}</span></div>
             </div>
             ${expense.memo ? `<div class="expense-memo">${expense.memo}</div>` : ''}
         </div>
@@ -222,15 +223,16 @@ function initChart() {
             datasets: [{
                 label: '支出額',
                 data: [],
-                borderColor: '#00B4DB',
-                backgroundColor: 'rgba(0, 180, 219, 0.1)',
+                borderColor: 'rgba(255, 255, 255, 0.8)',
+                backgroundColor: 'transparent',
                 tension: 0.4,
-                fill: true,
-                pointBackgroundColor: '#00B4DB',
-                pointBorderColor: '#fff',
-                pointBorderWidth: 2,
-                pointRadius: 4,
-                pointHoverRadius: 6
+                fill: false,
+                pointBackgroundColor: 'rgba(255, 255, 255, 0.9)',
+                pointBorderColor: 'rgba(255, 255, 255, 0.3)',
+                pointBorderWidth: 3,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                borderWidth: 3
             }]
         },
         options: {
@@ -241,6 +243,11 @@ function initChart() {
                     display: false
                 },
                 tooltip: {
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    titleColor: '#333',
+                    bodyColor: '#666',
+                    borderColor: 'rgba(255, 255, 255, 0.3)',
+                    borderWidth: 1,
                     callbacks: {
                         label: function(context) {
                             return '¥' + context.parsed.y.toLocaleString();
@@ -252,14 +259,29 @@ function initChart() {
                 y: {
                     beginAtZero: true,
                     ticks: {
+                        color: 'rgba(255, 255, 255, 0.6)',
+                        font: {
+                            size: 11
+                        },
                         callback: function(value) {
                             return '¥' + value.toLocaleString();
                         }
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)',
+                        drawBorder: false
                     }
                 },
                 x: {
+                    ticks: {
+                        color: 'rgba(255, 255, 255, 0.7)',
+                        font: {
+                            size: 12
+                        }
+                    },
                     grid: {
-                        display: false
+                        display: false,
+                        drawBorder: false
                     }
                 }
             }
@@ -278,47 +300,50 @@ function updateChart() {
     chart.data.labels = weekData.labels;
     chart.data.datasets[0].data = weekData.amounts;
 
-    // 今日の日付のポイントを強調
-    const todayIndex = weekData.labels.findIndex(label => label.includes('今日'));
-    chart.data.datasets[0].pointRadius = weekData.labels.map((_, i) => i === todayIndex ? 8 : 4);
+    // 今日の日付のポイントを強調（白い丸）
+    const todayIndex = weekData.todayIndex;
+    chart.data.datasets[0].pointRadius = weekData.labels.map((_, i) => i === todayIndex ? 9 : 5);
     chart.data.datasets[0].pointBackgroundColor = weekData.labels.map((_, i) =>
-        i === todayIndex ? '#fff' : '#00B4DB'
+        i === todayIndex ? 'rgba(255, 255, 255, 1)' : 'rgba(255, 255, 255, 0.9)'
     );
     chart.data.datasets[0].pointBorderColor = weekData.labels.map((_, i) =>
-        i === todayIndex ? '#00B4DB' : '#fff'
+        i === todayIndex ? 'rgba(255, 255, 255, 0.5)' : 'rgba(255, 255, 255, 0.3)'
     );
     chart.data.datasets[0].pointBorderWidth = weekData.labels.map((_, i) =>
-        i === todayIndex ? 3 : 2
+        i === todayIndex ? 4 : 3
     );
 
     chart.update();
 }
 
-// 週間データを取得（月曜始まり）
+// 週間データを取得（日曜始まり）
 function getWeekData() {
     const today = new Date();
     const dayOfWeek = today.getDay(); // 0:日曜, 1:月曜, ..., 6:土曜
 
-    // 月曜日を週の開始とする
-    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-    const monday = new Date(today);
-    monday.setDate(today.getDate() + mondayOffset);
-    monday.setHours(0, 0, 0, 0);
+    // 日曜日を週の開始とする
+    const sunday = new Date(today);
+    sunday.setDate(today.getDate() - dayOfWeek);
+    sunday.setHours(0, 0, 0, 0);
 
     const labels = [];
     const amounts = [];
-    const dayNames = ['月', '火', '水', '木', '金', '土', '日'];
+    const dayNames = ['日曜', '月曜', '火曜', '水曜', '木曜', '金曜', '土曜'];
+    let todayIndex = -1;
 
     for (let i = 0; i < 7; i++) {
-        const date = new Date(monday);
-        date.setDate(monday.getDate() + i);
+        const date = new Date(sunday);
+        date.setDate(sunday.getDate() + i);
 
         const dateStr = date.toDateString();
         const isToday = dateStr === today.toDateString();
 
-        // ラベル作成
-        const label = isToday ? `${dayNames[i]}(今日)` : dayNames[i];
-        labels.push(label);
+        if (isToday) {
+            todayIndex = i;
+        }
+
+        // ラベル作成（シンプルに曜日名のみ）
+        labels.push(dayNames[i]);
 
         // その日の支出合計を計算
         const dayExpenses = expenses.filter(exp => {
@@ -330,5 +355,5 @@ function getWeekData() {
         amounts.push(total);
     }
 
-    return { labels, amounts };
+    return { labels, amounts, todayIndex };
 }

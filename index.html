@@ -15,11 +15,6 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- ヘッダー -->
-        <header class="app-header">
-            <h1>💰 家計簿</h1>
-        </header>
-
         <!-- 週間グラフセクション -->
         <section class="chart-section">
             <canvas id="weeklyChart"></canvas>
@@ -28,15 +23,11 @@
         <!-- サマリーセクション -->
         <section class="summary-section">
             <div class="date-display" id="dateDisplay"></div>
-            <div class="total-amount">
-                <span class="label">今日の合計:</span>
-                <span class="amount" id="todayTotal">¥0</span>
-            </div>
+            <div class="total-amount" id="todayTotal">¥0</div>
         </section>
 
         <!-- 支出一覧 -->
         <section class="expenses-section">
-            <h2>今日の支出</h2>
             <div id="expensesList" class="expenses-list">
                 <!-- 支出カードがここに動的に追加されます -->
             </div>
