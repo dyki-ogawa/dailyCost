@@ -449,26 +449,25 @@ form {
     transform: scale(0.98);
 }
 
-.delete-btn {
-    width: 100%;
-    padding: 14px;
-    background: #dc3545;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.3s;
-    margin-top: 12px;
+.delete-link-container {
+    text-align: center;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-.delete-btn:hover {
-    background: #c82333;
+.delete-link {
+    display: inline-block;
+    color: #dc3545;
+    font-size: 14px;
+    text-decoration: none;
+    padding: 8px 12px;
+    transition: all 0.3s ease;
 }
 
-.delete-btn:active {
-    transform: scale(0.98);
+.delete-link:hover {
+    color: #c82333;
+    text-decoration: underline;
 }
 
 /* カテゴリボタングリッド */

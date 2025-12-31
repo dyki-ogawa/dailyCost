@@ -146,8 +146,11 @@ function setupEventListeners() {
     // 編集フォーム送信
     document.getElementById('editExpenseForm').addEventListener('submit', handleEditSubmit);
 
-    // 削除ボタン
-    document.getElementById('deleteExpenseBtn').addEventListener('click', handleDelete);
+    // 削除リンク
+    document.getElementById('deleteExpenseBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        handleDelete();
+    });
 
     // 日付ナビゲーション
     document.getElementById('prevDayBtn').addEventListener('click', () => {

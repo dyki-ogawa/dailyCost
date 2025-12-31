@@ -94,7 +94,7 @@
 
                     <div class="form-group">
                         <label for="memo">メモ</label>
-                        <textarea id="memo" name="memo" rows="3" placeholder="メモ（任意）"></textarea>
+                        <input type="text" id="memo" name="memo" placeholder="メモ（任意）">
                     </div>
 
                     <button type="submit" class="submit-btn">追加する</button>
@@ -126,11 +126,13 @@
 
                     <div class="form-group">
                         <label for="editMemo">メモ</label>
-                        <textarea id="editMemo" name="memo" rows="3" placeholder="メモ（任意）"></textarea>
+                        <input type="text" id="editMemo" name="memo" placeholder="メモ（任意）">
                     </div>
 
                     <button type="submit" class="submit-btn">更新する</button>
-                    <button type="button" class="delete-btn" id="deleteExpenseBtn">削除する</button>
+                    <div class="delete-link-container">
+                        <a href="#" class="delete-link" id="deleteExpenseBtn">削除する</a>
+                    </div>
                 </form>
             </div>
         </div>
