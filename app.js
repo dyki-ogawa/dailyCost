@@ -229,8 +229,12 @@ function updateDisplay() {
 function updateDateDisplay() {
     const month = currentDate.getMonth() + 1;
     const day = currentDate.getDate();
+    const dayOfWeek = currentDate.getDay();
 
-    document.getElementById('dateDisplay').textContent = `${month}/${day}`;
+    const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
+    const dayName = dayNames[dayOfWeek];
+
+    document.getElementById('dateDisplay').textContent = `${month}/${day}（${dayName}）`;
 }
 
 // 選択日の合計を更新
@@ -392,24 +396,26 @@ function updateChart() {
     chart.update();
 }
 
-// 週間データを取得（日曜始まり）
+// 週間データを取得（月曜始まり）
 function getWeekData() {
     const today = new Date();
     const dayOfWeek = today.getDay(); // 0:日曜, 1:月曜, ..., 6:土曜
 
-    // 日曜日を週の開始とする
-    const sunday = new Date(today);
-    sunday.setDate(today.getDate() - dayOfWeek);
-    sunday.setHours(0, 0, 0, 0);
+    // 月曜日を週の開始とする
+    // getDay()は日曜=0なので、月曜始まりにするには調整が必要
+    const daysSinceMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - daysSinceMonday);
+    monday.setHours(0, 0, 0, 0);
 
     const labels = [];
     const amounts = [];
-    const dayNames = ['日曜', '月曜', '火曜', '水曜', '木曜', '金曜', '土曜'];
+    const dayNames = ['月曜', '火曜', '水曜', '木曜', '金曜', '土曜', '日曜'];
     let todayIndex = -1;
 
     for (let i = 0; i < 7; i++) {
-        const date = new Date(sunday);
-        date.setDate(sunday.getDate() + i);
+        const date = new Date(monday);
+        date.setDate(monday.getDate() + i);
 
         const dateStr = date.toDateString();
         const isToday = dateStr === today.toDateString();
