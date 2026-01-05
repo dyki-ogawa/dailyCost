@@ -17,6 +17,7 @@ let currentDate = new Date(); // 現在表示している日付
 let currentUser = null; // 現在ログインしているユーザー
 let unsubscribeSnapshot = null; // Firestoreリアルタイムリスナーの解除関数
 let isInitialized = false; // アプリが初期化済みかどうかのフラグ
+let weekDates = []; // 週間グラフの日付データ
 
 // ページ読み込み時の初期化
 document.addEventListener('DOMContentLoaded', () => {
@@ -330,6 +331,15 @@ function initChart() {
         options: {
             responsive: true,
             maintainAspectRatio: true,
+            onClick: (event, elements) => {
+                if (elements.length > 0) {
+                    const index = elements[0].index;
+                    if (weekDates[index]) {
+                        currentDate = new Date(weekDates[index]);
+                        updateDisplay();
+                    }
+                }
+            },
             plugins: {
                 legend: {
                     display: false
@@ -377,10 +387,13 @@ function updateChart() {
 
     const weekData = getWeekData();
 
+    // グローバル変数に日付を保存（クリック時に使用）
+    weekDates = weekData.dates;
+
     chart.data.labels = weekData.labels;
     chart.data.datasets[0].data = weekData.amounts;
 
-    // 今日の日付のポイントを強調（白い丸）
+    // 選択中の日付のポイントを強調（白い丸）
     const todayIndex = weekData.todayIndex;
     chart.data.datasets[0].pointRadius = weekData.labels.map((_, i) => i === todayIndex ? 9 : 5);
     chart.data.datasets[0].pointBackgroundColor = weekData.labels.map((_, i) =>
@@ -398,29 +411,31 @@ function updateChart() {
 
 // 週間データを取得（月曜始まり）
 function getWeekData() {
-    const today = new Date();
-    const dayOfWeek = today.getDay(); // 0:日曜, 1:月曜, ..., 6:土曜
+    const selectedDate = currentDate;
+    const dayOfWeek = selectedDate.getDay(); // 0:日曜, 1:月曜, ..., 6:土曜
 
     // 月曜日を週の開始とする
     // getDay()は日曜=0なので、月曜始まりにするには調整が必要
     const daysSinceMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-    const monday = new Date(today);
-    monday.setDate(today.getDate() - daysSinceMonday);
+    const monday = new Date(selectedDate);
+    monday.setDate(selectedDate.getDate() - daysSinceMonday);
     monday.setHours(0, 0, 0, 0);
 
     const labels = [];
     const amounts = [];
+    const dates = []; // 日付を保存
     const dayNames = ['月曜', '火曜', '水曜', '木曜', '金曜', '土曜', '日曜'];
     let todayIndex = -1;
 
     for (let i = 0; i < 7; i++) {
         const date = new Date(monday);
         date.setDate(monday.getDate() + i);
+        dates.push(new Date(date)); // 日付を保存
 
         const dateStr = date.toDateString();
-        const isToday = dateStr === today.toDateString();
+        const isSelected = dateStr === selectedDate.toDateString();
 
-        if (isToday) {
+        if (isSelected) {
             todayIndex = i;
         }
 
@@ -437,7 +452,7 @@ function getWeekData() {
         amounts.push(total);
     }
 
-    return { labels, amounts, todayIndex };
+    return { labels, amounts, todayIndex, dates };
 }
 
 // 編集用カテゴリボタンを設定
